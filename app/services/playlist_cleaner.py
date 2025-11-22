@@ -1,7 +1,7 @@
 import spotipy
 import math
 from spotipy import Spotify
-from models import *
+from schemas import *
 from api_calls import get_song_play_count, get_artist_monthly_listeners
 
 
