@@ -15,6 +15,7 @@ class PlaylistCleaner(Spotify):
     def __init__(self) -> None:
         """Initializes the Playlist Cleaner class"""
 
+        # TODO: change inheritance to storing a spotipy instance
         auth = spotipy.SpotifyPKCE(client_id="03775c1ad3054917ae9f05d01caeb9ed",
                                    redirect_uri="https://127.0.0.1",
                                    scope="playlist-read-private,"
@@ -33,15 +34,13 @@ class PlaylistCleaner(Spotify):
         if flag is None:
             flag = ""
 
-        playlists = super().current_user_playlists()  # Getting the user playlists
-        if playlists["total"] > 50:  # If more than 50 playlists, make additional requests
-            playlists = playlists["items"]
-            number_of_additional_requests = math.ceil(playlists["total"] / 50) - 1
+        raw_playlists = super().current_user_playlists()  # Getting the user playlists
+        playlists = raw_playlists["items"]
 
-            for i in range(number_of_additional_requests):
-                playlists.extend(super().current_user_playlists(50, (i + 1) * 50)["items"])
-        else:
-            playlists = playlists["items"]
+        while raw_playlists:  # Keep getting songs until there are no more
+            raw_playlists = self.next(raw_playlists)
+            if raw_playlists:
+                playlists.extend(raw_playlists["items"])
 
         for playlist in playlists:
             name = playlist["name"]
@@ -158,4 +157,4 @@ class PlaylistCleaner(Spotify):
             artists_names = ", ".join(artist["name"] for artist in track["artists"])
             album_name = track["album"]["name"]
 
-            yield f"{artists_names} | {album_name} | {track_name}"
+            yield f"{artists_names} | {track_name} | {album_name}"
