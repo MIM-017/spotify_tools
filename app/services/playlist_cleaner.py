@@ -71,32 +71,43 @@ class PlaylistCleaner(Spotify):
         return artist_monthly_listeners <= self.A_PLAY_ARTIST_MONTHLY_LISTENERS
 
 
-    def check_playlist(self, playlist_id: str) -> tuple[Track, bool]:
-        """Checks every song in a playlist whether it's A-Play"""
+    def check_playlist(self, *, playlist: Playlist = None, playlist_id: str = None):
+        """Checks every song in a playlist whether it's A-Play
+        and adds the result of the check to the song's attribute .is_a_play"""
 
-        result = self.playlist_items(playlist_id, fields="items(track(name, id, album.id, artists.id, artists.name)), next")
-        # playlist_name = self.playlist(playlist_id, fields="name")["name"]
+        if playlist_id is None and playlist is None:
+            raise ValueError("Either playlist_id or a playlist instance is required")
 
-        tracks = result["items"]
+        if playlist is None:
+            result = self.playlist_items(playlist_id, fields="items(track(name, id, album.id, artists.id, artists.name)), next")
+            # playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
-        while result:  # Keep getting songs until there are no more
-            result = self.next(result)
-            if result:
-                tracks.extend(result["items"])
+            tracks = result["items"]
 
-        for raw_track in tracks:
-            track_name = raw_track["track"]["name"]
-            track_id = raw_track["track"]["id"]
-            album_id = raw_track["track"]["album"]["id"]
-            artists = [Artist(name=i["name"], artist_id=i["id"]) for i in raw_track["track"]["artists"]]
-            track = Track(name=track_name,
-                          track_id=track_id,
-                          album_id=album_id,
-                          artists=artists)
-            is_a_play = (self.is_track_a_play(track))
-            track.is_a_play = is_a_play
+            while result:  # Keep getting songs until there are no more
+                result = self.next(result)
+                if result:
+                    tracks.extend(result["items"])
 
-            yield track
+            for raw_track in tracks:
+                track_name = raw_track["track"]["name"]
+                track_id = raw_track["track"]["id"]
+                album_id = raw_track["track"]["album"]["id"]
+                artists = [Artist(name=i["name"], artist_id=i["id"]) for i in raw_track["track"]["artists"]]
+                track = Track(name=track_name,
+                              track_id=track_id,
+                              album_id=album_id,
+                              artists=artists)
+                is_a_play = (self.is_track_a_play(track))
+                track.is_a_play = is_a_play
+
+                yield track
+
+        else:
+            for track in playlist.tracks:
+                track.is_a_play = self.is_track_a_play(track)
+
+                yield track
 
 
     def refine_playlist(self, *, playlist_id: str | None = None, playlist: Playlist | None = None):
