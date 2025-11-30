@@ -133,3 +133,29 @@ class PlaylistCleaner(Spotify):
             if track.is_a_play:
                 self.playlist_add_items(new_playlist_id, [track.track_id])
 
+
+    def get_playlist_kuci_formatted(self, *, playlist_id: str, playlist: Playlist | None = None):
+        """Provides a list of songs in the format <artist name> | <song name> | <album name>"""
+
+        if playlist_id is None and playlist is None:
+            raise ValueError("Either playlist_id or a playlist instance is required")
+
+        if playlist is None:
+            result = self.playlist_items(playlist_id,
+                                         fields="items(track(name, artists.name, album.name)), next")
+
+            tracks = result["items"]
+
+            while result:  # Keep getting songs until there are no more
+                result = self.next(result)
+                if result:
+                    tracks.extend(result["items"])
+        else:
+            tracks = playlist.tracks
+
+        for track in [_["track"] for _ in tracks]:
+            track_name = track["name"]
+            artists_names = ", ".join(artist["name"] for artist in track["artists"])
+            album_name = track["album"]["name"]
+
+            yield f"{artists_names} | {album_name} | {track_name}"
