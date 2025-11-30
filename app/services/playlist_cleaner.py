@@ -113,11 +113,15 @@ class PlaylistCleaner(Spotify):
     def refine_playlist(self, *, playlist_id: str | None = None, playlist: Playlist | None = None):
         """Creates a new playlist with a name in format <Old playlist name Refined by Spotify Tools>
         with only A-Play tracks added"""
+
         if playlist_id is None and playlist is None:
             raise ValueError("Either playlist_id or a playlist instance is required")
 
         if playlist_id is None:
             playlist_id = playlist.playlist_id
+            tracks = self.check_playlist(playlist = playlist)
+        else:
+            tracks = self.check_playlist(playlist_id = playlist_id)
 
         playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
@@ -125,7 +129,7 @@ class PlaylistCleaner(Spotify):
                                   description=f"Playlist {playlist_name} refined by Spotify Tools with B-Play and Gray-Play songs removed")
         new_playlist_id = result["id"]
 
-        for track in self.check_playlist(playlist_id):
+        for track in tracks:
             if track.is_a_play:
                 self.playlist_add_items(new_playlist_id, [track.track_id])
 
