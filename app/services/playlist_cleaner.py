@@ -23,8 +23,7 @@ class PlaylistCleaner(Spotify):
                                          "playlist-modify-private,"
                                          "playlist-modify-public")
 
-        super().__init__(auth_manager = auth)
-
+        super().__init__(auth_manager=auth)
 
     def get_marked_playlists(self, flag=None) -> list[Playlist]:
         """Returns the Playlist object of playlists marked with a provided flag"""
@@ -55,7 +54,6 @@ class PlaylistCleaner(Spotify):
 
         return result
 
-
     def is_track_a_play(self, track: Track) -> bool:
         if track.album_id:
             play_count = get_song_play_count(track.track_id, album_id=track.album_id)
@@ -64,11 +62,9 @@ class PlaylistCleaner(Spotify):
 
         return (play_count <= self.A_PLAY_SONG_STREAMS) and self.is_artist_a_play(track.artists[0])
 
-
     def is_artist_a_play(self, artist: Artist) -> bool:
         artist_monthly_listeners = get_artist_monthly_listeners(artist.artist_id)
         return artist_monthly_listeners <= self.A_PLAY_ARTIST_MONTHLY_LISTENERS
-
 
     def check_playlist(self, *, playlist: Playlist = None, playlist_id: str = None):
         """Checks every song in a playlist whether it's A-Play
@@ -78,7 +74,8 @@ class PlaylistCleaner(Spotify):
             raise ValueError("Either playlist_id or a playlist instance is required")
 
         if playlist is None:
-            result = self.playlist_items(playlist_id, fields="items(track(name, id, album.id, artists.id, artists.name)), next")
+            result = self.playlist_items(playlist_id,
+                                         fields="items(track(name, id, album.id, artists.id, artists.name)), next")
             # playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
             tracks = result["items"]
@@ -108,7 +105,6 @@ class PlaylistCleaner(Spotify):
 
                 yield track
 
-
     def refine_playlist(self, *, playlist_id: str | None = None, playlist: Playlist | None = None):
         """Creates a new playlist with a name in format <Old playlist name Refined by Spotify Tools>
         with only A-Play tracks added"""
@@ -118,22 +114,21 @@ class PlaylistCleaner(Spotify):
 
         if playlist_id is None:
             playlist_id = playlist.playlist_id
-            tracks = self.check_playlist(playlist = playlist)
+            tracks = self.check_playlist(playlist=playlist)
         else:
-            tracks = self.check_playlist(playlist_id = playlist_id)
+            tracks = self.check_playlist(playlist_id=playlist_id)
 
         playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
         result = self.user_playlist_create(self.me()["id"], playlist_name + " REFINED by Spotify Tools",
-                                  description=f"Playlist {playlist_name} refined by Spotify Tools with B-Play and Gray-Play songs removed")
+                                           description=f"Playlist {playlist_name} refined by Spotify Tools with B-Play and Gray-Play songs removed")
         new_playlist_id = result["id"]
 
         for track in tracks:
             if track.is_a_play:
                 self.playlist_add_items(new_playlist_id, [track.track_id])
 
-
-    def get_playlist_kuci_formatted(self, *, playlist_id: str, playlist: Playlist | None = None):
+    def get_playlist_kuci_formatted(self, *, playlist_id: str | None = None, playlist: Playlist | None = None) -> str:
         """Provides a list of songs in the format <artist name> | <song name> | <album name>"""
 
         if playlist_id is None and playlist is None:
