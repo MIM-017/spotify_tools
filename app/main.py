@@ -1,19 +1,16 @@
-import spotipy
-import playlist_cleaner
-#
-p = playlist_cleaner.PlaylistCleaner()
-# print(p.get_marked_playlists("41gDnmL2BjwU7KfXtDIGAa"))
-p.refine_playlist(playlist_id="78yNIoqgKrDOQMXWPKDO0P")
-result = p.check_playlist("78yNIoqgKrDOQMXWPKDO0P")
-for i in result:
-    print(i)
 
 from fastapi import FastAPI
 
+from app.services.playlist_cleaner import PlaylistCleaner
+
 app = FastAPI()
+playlist_cleaner = PlaylistCleaner()
+@app.get("/playlist_formatted/{playlist_id}")
+async def get_playlist_kuci_formatted(playlist_id: str):
+    result = playlist_cleaner.get_playlist_kuci_formatted(playlist_id=playlist_id)
+    return list(result)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@app.get("/refine_playlist/{playlist_id}")
+async def refine_playlist(playlist_id: str):
+    playlist_cleaner.refine_playlist(playlist_id=playlist_id)
 
-from pydantic import Field
