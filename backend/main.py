@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI
 
-from app.services.playlist_cleaner import PlaylistCleaner
+from backend.services.playlist_cleaner import PlaylistCleaner
 
 app = FastAPI()
 playlist_cleaner = PlaylistCleaner()
