@@ -65,9 +65,21 @@ class PlaylistCleaner(Spotify):
         artist_monthly_listeners = get_artist_monthly_listeners(artist.artist_id)
         return artist_monthly_listeners <= self.A_PLAY_ARTIST_MONTHLY_LISTENERS
 
+    def is_playlist_A_play(self, *, playlist: Playlist, playlist_id: str = None) -> bool:
+        """Checks whether the playlist is A-Play"""
+
+        if playlist_id is None and playlist is None:
+            raise ValueError("Either playlist_id or a playlist instance is required")
+
+        for track in self.check_playlist(playlist=playlist, playlist_id=playlist_id):
+            if not track.is_a_play:
+                return False
+        return True
+
     def check_playlist(self, *, playlist: Playlist = None, playlist_id: str = None):
         """Checks every song in a playlist whether it's A-Play
-        and adds the result of the check to the song's attribute .is_a_play"""
+        and adds the result of the check to the song's attribute .is_a_play.
+        The playlist instance takes priority over the playlist_id"""
 
         if playlist_id is None and playlist is None:
             raise ValueError("Either playlist_id or a playlist instance is required")
