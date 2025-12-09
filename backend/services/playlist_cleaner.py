@@ -65,7 +65,7 @@ class PlaylistCleaner(Spotify):
         artist_monthly_listeners = get_artist_monthly_listeners(artist.artist_id)
         return artist_monthly_listeners <= self.A_PLAY_ARTIST_MONTHLY_LISTENERS
 
-    def is_playlist_A_play(self, *, playlist: Playlist, playlist_id: str = None) -> bool:
+    def is_playlist_A_play(self, *, playlist: Playlist = None, playlist_id: str = None) -> bool:
         """Checks whether the playlist is A-Play"""
 
         if playlist_id is None and playlist is None:
