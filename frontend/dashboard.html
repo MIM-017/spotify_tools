@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spotify Tools</title>
+        <script src="playlist_retreive.js" defer type="module"></script>
+        <script src="auth.js" type="module"></script>
+        <script src="config.js" type="module"></script>
+    </head>
+    <body>
+        <template id="track-template">
+            <li>
+            <div class="track">
+                <h3 class="track-name">Track Name</h3>
+                <h4 class="artist-name">Artist Name</h4>
+                <h4 class="album-name">Album Name</h4>
+                <span class="track-category">A-Play</span>
+            </div> 
+            </li>
+        </template>
+
+        <p id="container-name">Playlists</p>
+        <ul id="container">
+        </ul>
+    </body>
+</html>
