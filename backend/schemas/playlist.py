@@ -8,3 +8,4 @@ class Playlist(BaseModel):
     playlist_id: str
     public: bool | None = None
     tracks: list[Track] | None = None
+    is_a_play: bool | None = None
