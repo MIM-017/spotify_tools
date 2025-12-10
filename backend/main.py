@@ -25,5 +25,5 @@ async def refine_playlist(playlist_id: str):
     playlist_cleaner.refine_playlist(playlist_id=playlist_id)
 
 @app.get("/retrieve_playlists/")
-async def retrieve_playlists():
-    pass
+async def retrieve_playlists(check_for_a_play: bool | None = False) -> list[Playlist]:
+    return list(playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play))  # TODO: Consider converting to a stream for better performance

@@ -24,10 +24,8 @@ class PlaylistCleaner(Spotify):
 
         super().__init__(auth_manager=auth)
 
-    def get_marked_playlists(self, flag=None) -> list[Playlist]:
+    def get_marked_playlists(self, flag=None, check_for_a_play: bool = False):
         """Returns the Playlist object of playlists marked with a provided flag"""
-
-        result = []
 
         if flag is None:
             flag = ""
@@ -46,12 +44,12 @@ class PlaylistCleaner(Spotify):
             public = playlist["public"]
 
             if not name.endswith(flag): continue
+            is_a_play = self.is_playlist_A_play(playlist_id=playlist_id) if check_for_a_play else None
 
-            result.append(Playlist(name=name,
-                                   playlist_id=playlist_id,
-                                   public=public))
-
-        return result
+            yield Playlist(name=name,
+                  playlist_id=playlist_id,
+                  public=public,
+                  is_a_play=is_a_play)
 
     def is_track_a_play(self, track: Track) -> bool:
         if track.album_id:
