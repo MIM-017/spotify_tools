@@ -1,6 +1,8 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
+from starlette.responses import RedirectResponse
 
+from backend.schemas import Playlist
 from backend.services.playlist_cleaner import PlaylistCleaner
 
 origins = ["http://127.0.0.1:5500"]
@@ -27,3 +29,11 @@ async def refine_playlist(playlist_id: str):
 @app.get("/retrieve_playlists/")
 async def retrieve_playlists(check_for_a_play: bool | None = False) -> list[Playlist]:
     return list(playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play))  # TODO: Consider converting to a stream for better performance
+
+@app.get("/authorize_spotify")
+async def authorize_spotify():
+    return RedirectResponse(f"{playlist_cleaner.auth_manager.get_authorize_url()}")
+
+@app.get("/authorize_user")
+async def authorize_user(code: str):
+    pass
