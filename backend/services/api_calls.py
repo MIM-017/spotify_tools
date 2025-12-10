@@ -6,13 +6,19 @@ API_ROOT = "https://api.t4ils.dev/"
 
 def get_artist_info(artist_id: str):
     response = requests.get(f"{API_ROOT}artistInsights", params={"artistid": artist_id})
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        return get_artist_info(artist_id)
     return response.json()
 
 
 def get_album_info(album_id: str):
     response = requests.get(f"{API_ROOT}albumPlayCount", params={"albumid": album_id})
-    response.raise_for_status()
+    try:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError:
+        return get_album_info(album_id)
     return response.json()
 
 
