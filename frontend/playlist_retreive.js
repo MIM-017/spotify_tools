@@ -3,7 +3,8 @@ import { getAccessToken } from './auth.js';
 
 async function retrievePlaylists() {
     try{
-        let result = await fetch(`${API_ROOT}/retrieve_playlists/`,
+        let params = new URLSearchParams({"check_for_a_play": document.getElementById("check-for-a-play").checked.toString()});
+        let result = await fetch(`${API_ROOT}/retrieve_playlists/?${params.toString()}`,
             {headers: {'Content-Type': 'application/json',
             authorization: `Bearer ${getAccessToken()}`}
         });
@@ -19,5 +20,4 @@ async function retrievePlaylists() {
     }
 }
 
-let playlists = await retrievePlaylists();
-console.log(playlists);
+document.getElementById("retrieve").addEventListener("click", async () => retrievePlaylists());
