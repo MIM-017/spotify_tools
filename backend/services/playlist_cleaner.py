@@ -36,7 +36,7 @@ class PlaylistCleaner(Spotify):
         """Returns the username of the current user in cache_handler"""
         return self.auth_manager.cache_handler.current_user
 
-    def get_spotify_user_username(self, access_token: str) -> str:
+    def get_spotify_user_user_id(self, access_token: str) -> str:
         self.set_auth(access_token)  # Setting the auth token manually to determine the username
         result = self.me()["id"]
         self.set_auth(None)  # Removing the auth token to allow the token manager provide further tokens
