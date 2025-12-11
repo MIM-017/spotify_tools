@@ -36,4 +36,6 @@ async def authorize_spotify():
 
 @app.get("/authorize_user")
 async def authorize_user(code: str):
-    pass
+    access_token = playlist_cleaner.auth_manager.get_access_token(code)
+    username = playlist_cleaner.get_spotify_user_username(access_token)
+    playlist_cleaner.save_token_to_cache(username, access_token)

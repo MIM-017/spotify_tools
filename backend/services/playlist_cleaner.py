@@ -19,7 +19,7 @@ class PlaylistCleaner(Spotify):
         cache_handler = TokenManager()
 
         auth = spotipy.SpotifyPKCE(client_id="03775c1ad3054917ae9f05d01caeb9ed",
-                                   redirect_uri="https://127.0.0.1",
+                                   redirect_uri="http://127.0.0.1:8000/authorize_user",
                                    scope="playlist-read-private,"
                                          "playlist-read-collaborative,"
                                          "playlist-modify-private,"
@@ -35,6 +35,17 @@ class PlaylistCleaner(Spotify):
     def get_current_username(self):
         """Returns the username of the current user in cache_handler"""
         return self.auth_manager.cache_handler.current_user
+
+    def get_spotify_user_username(self, access_token: str) -> str:
+        self.set_auth(access_token)  # Setting the auth token manually to determine the username
+        result = self.me()["id"]
+        self.set_auth(None)  # Removing the auth token to allow the token manager provide further tokens
+        return result
+
+    def save_token_to_cache(self, username: str, access_token: str):
+        """A helper method to access the method of TokenManager"""
+        self.set_current_username(username)
+        self.auth_manager.cache_handler.save_token_to_cache(access_token)
 
     def get_marked_playlists(self, flag=None, check_for_a_play: bool = False):
         """Returns the Playlist object of playlists marked with a provided flag"""
