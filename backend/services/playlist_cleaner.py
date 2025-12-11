@@ -2,6 +2,7 @@ import spotipy
 from spotipy import Spotify
 from backend.schemas import *
 from backend.services.api_calls import get_song_play_count, get_artist_monthly_listeners
+from backend.services.token_manager import TokenManager
 
 
 class PlaylistCleaner(Spotify):
@@ -15,14 +16,25 @@ class PlaylistCleaner(Spotify):
         """Initializes the Playlist Cleaner class"""
 
         # TODO: change inheritance to storing a spotipy instance
+        cache_handler = TokenManager()
+
         auth = spotipy.SpotifyPKCE(client_id="03775c1ad3054917ae9f05d01caeb9ed",
                                    redirect_uri="https://127.0.0.1",
                                    scope="playlist-read-private,"
                                          "playlist-read-collaborative,"
                                          "playlist-modify-private,"
-                                         "playlist-modify-public")
+                                         "playlist-modify-public",
+                                   cache_handler=cache_handler)
 
         super().__init__(auth_manager=auth)
+
+    def set_current_username(self, user: str):
+        """Sets the username of the current user in cache_handler"""
+        self.auth_manager.cache_handler.current_user = user
+
+    def get_current_username(self):
+        """Returns the username of the current user in cache_handler"""
+        return self.auth_manager.cache_handler.current_user
 
     def get_marked_playlists(self, flag=None, check_for_a_play: bool = False):
         """Returns the Playlist object of playlists marked with a provided flag"""
