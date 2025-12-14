@@ -30,7 +30,7 @@ class TokenManager(CacheHandler):
         if cache_path:
             self.cache_path = cache_path
         else:
-            cache_path = "tokens/spotify_tokens.json"
+            cache_path = "backend/tokens/spotify_tokens.json"
             self.cache_path = cache_path
 
         self.current_user = None
