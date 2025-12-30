@@ -85,18 +85,36 @@ class TokenManager(CacheHandler):
 
 
     @clear_username_afterwards
-    @check_for_username
     def save_token_to_cache(self, token_info):
+        if self.current_user is None:
+            self.current_user = "temp"
+
         try:
-            with open(self.cache_path, "a+", encoding='utf-8') as f:
-                current_tokens = dict(f.read())
+            with open(self.cache_path, "r", encoding="utf-8") as f:
+                current_tokens = dict(json.loads(f.read()))
+
+            with open(self.cache_path, "w", encoding='utf-8') as f:
                 current_tokens[self.current_user] = token_info
                 f.write(json.dumps(current_tokens, cls=self.encoder_cls))
-            # https://github.com/spotipy-dev/spotipy/security/advisories/GHSA-pwhh-q4h6-w599
+                
             os.chmod(self.cache_path, 0o600)
+        except FileNotFoundError:
+            self.logger.info(f"Creating a new JSON token file at: {self.cache_path}")
+
+            with open(self.cache_path, "w", encoding='utf-8') as f:
+                current_tokens = {self.current_user: token_info}
+                f.write(json.dumps(current_tokens, cls=self.encoder_cls))
+            
         except OSError:
             self.logger.warning(f"Couldn't write token to cache at: {self.cache_path}")
-        except FileNotFoundError:
-            self.logger.warning(f"Couldn't set permissions to cache file at: {self.cache_path}")
+
+    @clear_username_afterwards
+    def assign_temp_token_to_user(self, user_id):
+        """Assigns the temporary saved token to a user"""
+
+        self.current_user = "temp"
+        token_info = self.get_cached_token()
+        self.current_user = user_id
+        self.save_token_to_cache(token_info)
 
 
