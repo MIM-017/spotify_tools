@@ -1,39 +1,84 @@
-from fastapi.security import APIKeyCookie
-from fastapi import Security, APIRouter, Response
-import jwt
-import secrets
+"""Security endpoints and helper functions"""
 
-SECRET_KEY = "f34cad96ab843ae541fa90f269ecce855a94fa0937f01267b2097a55e5e102a4"
-algorithm = "HS256"
-ACCESS_TOKEN_EXPIRE = 60 * 60 * 24
-REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 14
+from fastapi.security import APIKeyCookie
+from fastapi import Security, APIRouter, Response, HTTPException, status
+from starlette.responses import RedirectResponse
+from .token_manager import TokenManager
+from .config import *
 
 access_scheme = APIKeyCookie(name="access_token", auto_error=False)
-refresh_scheme = APIKeyCookie(name="refresh_token")
+refresh_scheme = APIKeyCookie(name="refresh_token", auto_error=False)
 
 auth_router = APIRouter()
 
-def create_JWT(spotify_user_id: str) -> str:
-    """Creates a JWT token with a spotify user id"""
-    return jwt.encode({"spotify_user_id": spotify_user_id}, SECRET_KEY, algorithm=algorithm)
+token_manager = TokenManager()
 
-def get_spotify_user_id(JWT: str) -> str:
-    """Returns a spotify user id from a provided JWT"""
-    return jwt.decode(JWT, SECRET_KEY, algorithms=algorithm)["spotify_user_id"]
 
-def create_refresh_token() -> str:
-    return secrets.token_hex(32)
+def set_access_token_cookie(response: Response, jwt: str):
+    """Sets the access token cookie in the provided response"""
 
-def retrieve_spotify_token(JWT: str) -> str:
-    """Returns the spotify user token from a database"""
-    pass
-
-def set_access_token_cookie(response: Response):
-    """Sets the access token cookie in the provided response instance"""
     response.set_cookie(key="access_token",
-                        value=create_JWT(), httponly=True)
+                        value=jwt,
+                        max_age=ACCESS_TOKEN_EXPIRE,
+                        httponly=True,
+                        secure=False,
+                        path="/")  # TODO: Change secure to True in production
+
+
+def set_refresh_token_cookie(response: Response, refresh_token: str):
+    """Sets the refresh token cookie in the provided response with the provided refresh token"""
+
+    response.set_cookie(key="refresh_token",
+                        value=refresh_token,
+                        max_age=REFRESH_TOKEN_EXPIRE,
+                        httponly=True,
+                        secure=False,
+                        path="/check_tokens")  # TODO: Change secure to True in production
 
 
 @auth_router.get("/check_tokens")
-def check_auth(access_token = Security(access_scheme), refresh_token = Security(refresh_scheme)):
+def check_auth(response: Response, access_token=Security(access_scheme), refresh_token=Security(refresh_scheme)):
+    """
+    Checks the refresh and the access tokens. If the access token is not set, sets it with the provided refresh token.
+    If the refresh token is not set, returns the 401 Http Error.
+
+    :param response:
+    :param access_token:
+    :param refresh_token:
+    :return:
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="The refresh token is not valid."
+    )
+
+    # Checking whether the refresh token is unset AND whether it maps to a user
     if refresh_token is None:
+        raise credentials_exception
+
+    user_id = token_manager.retrieve_user_id_from_refresh_token(refresh_token)
+    if user_id is None:
+        raise credentials_exception
+
+    if access_token is None:
+        jwt = token_manager.create_jwt(user_id)
+        set_access_token_cookie(response, jwt)
+
+
+@auth_router.get("/authorize_user")
+async def authorize_user(code: str):
+    from ..main import playlist_cleaner
+
+    access_token = playlist_cleaner.auth_manager.get_access_token(code)
+    user_id = playlist_cleaner.get_spotify_user_user_id(access_token)
+    playlist_cleaner.auth_manager.cache_handler.assign_temp_token_to_user(user_id)
+
+    response = RedirectResponse("http://127.0.0.1:5500/dashboard.html")
+
+    jwt = token_manager.create_jwt(spotify_user_id=user_id)
+    set_access_token_cookie(response, jwt)
+
+    refresh_token = token_manager.save_refresh_token(spotify_user_id=user_id)
+    set_refresh_token_cookie(response, refresh_token)
+
+    return response  # TODO: Change
