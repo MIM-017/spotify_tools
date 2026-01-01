@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import errno
+from json import JSONDecodeError
 from typing import Callable
 
 from spotipy import CacheHandler
@@ -98,6 +99,7 @@ class TokenManager(CacheHandler):
                 f.write(json.dumps(current_tokens, cls=self.encoder_cls))
                 
             os.chmod(self.cache_path, 0o600)
+
         except FileNotFoundError:
             self.logger.info(f"Creating a new JSON token file at: {self.cache_path}")
 
@@ -107,6 +109,13 @@ class TokenManager(CacheHandler):
             
         except OSError:
             self.logger.warning(f"Couldn't write token to cache at: {self.cache_path}")
+
+        except JSONDecodeError:
+            self.logger.error(f"Couldn't decode JSON from cache at: {self.cache_path}. Overwriting data.")
+
+            with open(self.cache_path, "w", encoding='utf-8') as f:
+                current_tokens = {self.current_user: token_info}
+                f.write(json.dumps(current_tokens, cls=self.encoder_cls))
 
     @clear_username_afterwards
     def assign_temp_token_to_user(self, user_id):

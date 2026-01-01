@@ -38,7 +38,7 @@ class PlaylistCleaner(Spotify):
 
     def get_spotify_user_user_id(self, access_token: str) -> str:
         self.set_auth(access_token)  # Setting the auth token manually to determine the username
-        result = self.me()["id"]
+        result = self.me()["id"]  # TODO: add try/except block to catch the cases when a user is not whitelisted. Add an error page and token removal system in the authorize_used enpoint.
         self.set_auth(None)  # Removing the auth token to allow the token manager provide further tokens
         return result
 
