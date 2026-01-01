@@ -3,6 +3,7 @@
 from fastapi.security import APIKeyCookie
 from fastapi import Security, APIRouter, Response, HTTPException, status
 from starlette.responses import RedirectResponse
+from typing import Annotated
 from .token_manager import TokenManager
 from .config import *
 
@@ -12,6 +13,11 @@ refresh_scheme = APIKeyCookie(name="refresh_token", auto_error=False)
 auth_router = APIRouter()
 
 token_manager = TokenManager()
+
+unauthorized_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="The refresh token is not valid."
+)
 
 
 def set_access_token_cookie(response: Response, jwt: str):
@@ -47,18 +53,14 @@ def check_auth(response: Response, access_token=Security(access_scheme), refresh
     :param refresh_token:
     :return:
     """
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="The refresh token is not valid."
-    )
 
     # Checking whether the refresh token is unset AND whether it maps to a user
     if refresh_token is None:
-        raise credentials_exception
+        raise unauthorized_exception
 
     user_id = token_manager.retrieve_user_id_from_refresh_token(refresh_token)
     if user_id is None:
-        raise credentials_exception
+        raise unauthorized_exception
 
     if access_token is None:
         jwt = token_manager.create_jwt(user_id)
@@ -82,3 +84,8 @@ async def authorize_user(code: str):
     set_refresh_token_cookie(response, refresh_token)
 
     return response  # TODO: Change
+
+def get_user_id(access_token: Annotated[str, Security(access_scheme)]):
+    if access_token is None:
+        raise unauthorized_exception
+    return token_manager.get_spotify_user_id(access_token)
