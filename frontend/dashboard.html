@@ -8,20 +8,52 @@
     </head>
     <body>
         <template id="track-template">
-            <li>
-            <div class="track">
-                <h3 class="track-name">Track Name</h3>
-                <h4 class="artist-name">Artist Name</h4>
-                <h4 class="album-name">Album Name</h4>
-                <span class="track-category">A-Play</span>
-            </div> 
-            </li>
+            <tr>
+                <td><h3 class="track-name">Track Name</h3></td>
+                <td><h4 class="artist-name">Artist Name</h4></td>
+                <td><h4 class="album-name">Album Name</h4></td>
+                <td><p class="track-category">A-Play</p></td>
+            </tr>
         </template>
 
-        <p id="container-name">Playlists</p>
-        <input type="checkbox" id="check-for-a-play"/><label for="check-for-a-play">Check for A-Play</label>
-        <button id="retrieve">Retrieve</button>
-        <ul id="container">
-        </ul>
+        <template id="playlist-template">
+            <tr>
+                <td><h3 class="playlist-name">Playlist Name</h3></td>
+                <td><span>Playlist ID: </span><span class="playlist-id">Playlist ID</span></td>
+                <td><p class="is-a-play">A-Play</p></td>
+                <td><button class="open-playlist-button">Open Playlist</button></td>
+            </tr>
+        </template>
+
+        <template id="playlists-table-header-template">
+                <tr>
+                    <th>Playlist Name</th>
+                    <th>Playlist ID</th>
+                    <th>Is A-Play</th>
+                </tr>
+        </template>
+
+        <template id="playlist-table-header-template">
+                <tr>
+                    <th>Track Name</th>
+                    <th>Is A-Play</th>
+                </tr>
+        </template>
+
+        <template id="return-to-playlists-button-template">
+            <button id="return-to-playlists-button">Return to Playlists</button>
+        </template>
+
+        <div id="controls">
+            <h1 id="container-name">Playlists</h1>
+            <button id="check_for_a_play">Check for A-Play</button>
+        </div>
+
+        <table>
+            <thead id="data-table-header">
+            </thead>
+            <tbody id="data-table-body">
+            </tbody>
+        </table>
     </body>
 </html>
