@@ -2,7 +2,6 @@ import { API_ROOT } from "./config.js";
 
 const spotifyAuthorizeURL = `${API_ROOT}/authorize_spotify`;
 const tokenCheckURL = `${API_ROOT}/check_tokens`;
-let _accessToken = null;
 
 export async function fetchAccessToken() {
     const result = await fetch(`${API_ROOT}/get_access_token/`,
@@ -13,18 +12,8 @@ export async function fetchAccessToken() {
     return data;
 }
 
-export function setAccessToken(token) {
-    _accessToken = token;
-}
-
-export function getAccessToken() {
-    return _accessToken;
-}
-
 async function checkTokens() {
     const result = await fetch(tokenCheckURL, {"credentials": "include"});
-    console.log(result.status);
-    console.log("Test");
     if (result.status !== 200) {
         window.location.href = spotifyAuthorizeURL;
     }
