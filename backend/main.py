@@ -1,8 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI
-from starlette.responses import RedirectResponse
-
-from backend.schemas import Playlist
+from fastapi import FastAPI, Depends
+from fastapi.responses import StreamingResponse
 from backend.security import *
 from backend.services.playlist_cleaner import PlaylistCleaner
 
@@ -34,10 +32,17 @@ async def refine_playlist(playlist_id: str):
 
 
 @app.get("/retrieve_playlists")
-async def retrieve_playlists(check_for_a_play: bool | None = False) -> list[Playlist]:
-    return list(playlist_cleaner.get_marked_playlists(
-        check_for_a_play=check_for_a_play))  # TODO: Consider converting to a stream for better performance
+async def retrieve_playlists(user_id: Annotated[str, Depends(get_user_id)], check_for_a_play: bool | None = False):
+    playlist_cleaner.set_current_username(user_id)
+    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists()),
+                             media_type="application/x-ndjson")
 
+@app.get("/retrieve_tracks/{playlist_id}")
+async def retrieve_tracks(playlist_id: str,
+                          user_id: Annotated[str, Depends(get_user_id)]):
+    playlist_cleaner.set_current_username(user_id)
+    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.check_playlist(playlist_id=playlist_id)),
+                             media_type="application/x-ndjson")
 
 @app.get("/authorize_spotify")
 async def authorize_spotify():
