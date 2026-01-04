@@ -14,17 +14,17 @@
                 <td><h3 class="track-name">Track Name</h3></td>
                 <td><h4 class="artist-name">Artist Name</h4></td>
                 <td><h4 class="album-name">Album Name</h4></td>
-                <td><p class="track-category">A-Play</p></td>
+                <td><p class="is-a-play">A-Play</p></td>
             </tr>
         </template>
 
         <template id="playlist-template">
             <tr>
-                <td><h3 class="playlist-index">1</h3></td>
-                <td><h3 class="playlist-name">Playlist Name</h3></td>
-                <td><span>Playlist ID: </span><span class="playlist-id">Playlist ID</span></td>
+                <td><h4 class="playlist-index">1</h4></td>
+                <td><h4 class="playlist-name">Playlist Name</h4></td>
+                <td><span class="playlist-id">Playlist ID: </span><span class="playlist-id">Playlist ID</span></td>
                 <td><p class="is-a-play">A-Play</p></td>
-                <td><button class="open-playlist-button">Open Playlist</button></td>
+                <td><button class="button-black-style open-playlist-button">Open Playlist</button></td>
             </tr>
         </template>
 
@@ -50,19 +50,22 @@
         </template>
 
         <template id="check-for-a-play-button-template">
-            <button id="check-for-a-play-button">Check for A-Play</button>
+            <button id="check-for-a-play-button" class="button-green-style">Check for A-Play</button>
         </template>
 
-        <div id="controls">
-            <h1 id="container-name">Playlists</h1>
-            <button id="check-for-a-play-button">Check for A-Play</button>
-        </div>
 
-        <table>
-            <thead id="data-table-header">
-            </thead>
-            <tbody id="data-table-body">
-            </tbody>
-        </table>
+        <div id="container">
+            <div id="controls">
+                <h1 id="container-name">Playlists</h1>
+                <button id="check-for-a-play-button" class="button-green-style">Check for A-Play</button>
+            </div>
+
+            <table>
+                <thead id="data-table-header">
+                </thead>
+                <tbody id="data-table-body">
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>

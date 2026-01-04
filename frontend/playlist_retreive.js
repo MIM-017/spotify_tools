@@ -131,7 +131,7 @@ async function renderPlaylists(check_for_a_play = false){
         playlist.querySelector(".playlist-index").textContent = counter++;
         playlist.querySelector(".playlist-name").textContent = element.name;
         playlist.querySelector(".playlist-id").textContent = element.playlist_id;
-        playlist.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unckecked" : element.is_a_play;
+        playlist.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unchecked" : element.is_a_play;
         playlist.querySelector(".open-playlist-button").onclick = async () => {
             container_name.innerText = `Playlist: ${element.name}`;
             await renderTracks(element.playlist_id); 
@@ -169,7 +169,7 @@ async function renderTracks(playlist_id, check_for_a_play = false){
         track.querySelector(".track-name").textContent = element.name;
         track.querySelector(".artist-name").textContent = element.artist_name;
         track.querySelector(".album-name").textContent = element.album_name;
-        track.querySelector(".track-category").textContent = element.is_a_play === null ? "Unckecked" : element.is_a_play;
+        track.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unchecked" : element.is_a_play;
         data_table_body.appendChild(track);
     };
 };

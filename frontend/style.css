@@ -1,13 +1,81 @@
+@font-face {
+    font-family: "Spotify Mix";
+    src: url(fonts/SpotifyMix-Regular.woff2), url(fonts/SpotifyMix-Regular.ttf);
+    font-display: swap;
+}
+
+
 body{
+    font-family: 'Spotify Mix';
     background-color: #121212;
 }
 
-h1, h2, h3, h4, p, th, td, button {
+#container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#controls{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+table{
+    width: 80%;
+    margin: 20px 0px;
+    border-collapse: collapse;
+}
+
+thead{
+    border-bottom: 1px solid #333;
+}
+
+th{
+    color: white;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-align: left;
+}
+
+h1, h2, h3, h4, p, td {
     color: white;
 }
 
-button {
+.artist-name, .is-a-play, .album-name, .playlist-id {
+    color: #B3B3B3;
+}
+
+
+/* Button Styles */
+
+button{
+    border: none;
+    cursor: pointer;
+
+    height: 36px;
+    margin: 0px 10px;
+    padding: 0px 2em;
+}
+
+.button-green-style {
+    color: black;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+
     background-color: #1DB954;
-    border-radius: 20px;
-    height: 40px;
+    border-radius: 9999px;
+}
+
+.button-black-style {
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+
+    background-color: #282828;
+    border-radius: 9999px;
 }
