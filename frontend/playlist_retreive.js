@@ -106,9 +106,11 @@ async function renderPlaylists(check_for_a_play = false){
 
     // controls.appendChild(check_for_a_play_button_template.cloneNode(true));
     // check_for_a_play_button = controls.querySelector("#check_for_a_play");
-
+    
+    let counter = 1;
     for await (const element of playlistData) {
         let playlist = playlist_template.cloneNode(true);
+        playlist.querySelector(".playlist-index").textContent = counter++;
         playlist.querySelector(".playlist-name").textContent = element.name;
         playlist.querySelector(".playlist-id").textContent = element.playlist_id;
         playlist.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unckecked" : element.is_a_play;
@@ -134,9 +136,10 @@ async function renderTracks(playlist_id, check_for_a_play = false){
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
 
     // if (check_for_a_play_button) check_for_a_play_button.remove();
-
+    let counter = 1;
     for await (const element of playlistTracks) {
         let track = track_template.cloneNode(true);
+        track.querySelector(".track-index").textContent = counter++;
         track.querySelector(".track-name").textContent = element.name;
         track.querySelector(".artist-name").textContent = element.artist_name;
         track.querySelector(".album-name").textContent = element.album_name;
