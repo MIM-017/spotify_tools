@@ -9,6 +9,8 @@ const controls = document.getElementById("controls");
 const container_name = document.getElementById("container-name");
 const return_to_playlists_button_template = document.getElementById("return-to-playlists-button-template").content.cloneNode(true);
 let return_to_playlists_button = null;
+const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
+let check_for_a_play_button = null;
 
 async function* retrievePlaylists() {
     try{
@@ -93,13 +95,16 @@ async function renderPlaylists(){
     let playlistData = await retrievePlaylists();
 
     data_table_header.innerHTML = "";
-    data_table_header.appendChild(playlists_table_header_template);
+    data_table_header.appendChild(playlists_table_header_template.cloneNode(true));
     data_table_body.innerHTML = "";
 
     const playlist_template = document.getElementById("playlist-template").content;
 
     if (return_to_playlists_button) return_to_playlists_button.remove();
     container_name.innerText = "Playlists";
+
+    // controls.appendChild(check_for_a_play_button_template.cloneNode(true));
+    // check_for_a_play_button = controls.querySelector("#check_for_a_play");
 
     for await (const element of playlistData) {
         let playlist = playlist_template.cloneNode(true);
@@ -118,7 +123,7 @@ async function renderTracks(playlist_id){
     let playlistTracks = await retrieveTracks(playlist_id);
 
     data_table_header.innerHTML = "";
-    data_table_header.appendChild(playlist_table_header_template);
+    data_table_header.appendChild(playlist_table_header_template.cloneNode(true));
     data_table_body.innerHTML = "";
 
     const track_template = document.getElementById("track-template").content;
@@ -126,6 +131,8 @@ async function renderTracks(playlist_id){
     controls.appendChild(return_to_playlists_button_template.cloneNode(true));
     controls.querySelector("#return-to-playlists-button").onclick = async () => {await renderPlaylists()};
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
+
+    // if (check_for_a_play_button) check_for_a_play_button.remove();
 
     for await (const element of playlistTracks) {
         let track = track_template.cloneNode(true);
