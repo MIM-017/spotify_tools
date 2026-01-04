@@ -12,9 +12,9 @@ let return_to_playlists_button = null;
 const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
 let check_for_a_play_button = null;
 
-async function* retrievePlaylists() {
+async function* retrievePlaylists(check_for_a_play = false) {
     try{
-        let params = new URLSearchParams({"check_for_a_play": "false"});
+        let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
         let result = await fetch(`${API_ROOT}/retrieve_playlists?${params.toString()}`,
             {"method": "GET",
             "credentials": "include"}
@@ -52,9 +52,10 @@ async function* retrievePlaylists() {
     }
 }
 
-async function* retrieveTracks(playlist_id) {
+async function* retrieveTracks(playlist_id, check_for_a_play = false) {
     try{
-        let result = await fetch(`${API_ROOT}/retrieve_tracks/${playlist_id}`,
+        let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
+        let result = await fetch(`${API_ROOT}/retrieve_tracks/${playlist_id}?${params.toString()}`,
             {"method": "GET",
             "credentials": "include"
             });
@@ -91,8 +92,8 @@ async function* retrieveTracks(playlist_id) {
     }
 }
 
-async function renderPlaylists(){
-    let playlistData = await retrievePlaylists();
+async function renderPlaylists(check_for_a_play = false){
+    let playlistData = await retrievePlaylists(check_for_a_play);
 
     data_table_header.innerHTML = "";
     data_table_header.appendChild(playlists_table_header_template.cloneNode(true));
@@ -119,8 +120,8 @@ async function renderPlaylists(){
     };
 }
 
-async function renderTracks(playlist_id){
-    let playlistTracks = await retrieveTracks(playlist_id);
+async function renderTracks(playlist_id, check_for_a_play = false){
+    let playlistTracks = await retrieveTracks(playlist_id, check_for_a_play);
 
     data_table_header.innerHTML = "";
     data_table_header.appendChild(playlist_table_header_template.cloneNode(true));
@@ -139,7 +140,7 @@ async function renderTracks(playlist_id){
         track.querySelector(".track-name").textContent = element.name;
         track.querySelector(".artist-name").textContent = element.artist_name;
         track.querySelector(".album-name").textContent = element.album_name;
-        track.querySelector(".track-category").textContent = element.is_a_play;
+        track.querySelector(".track-category").textContent = element.is_a_play === null ? "Unckecked" : element.is_a_play;
         data_table_body.appendChild(track);
     };
 };

@@ -92,13 +92,13 @@ class PlaylistCleaner(Spotify):
         if playlist_id is None and playlist is None:
             raise ValueError("Either playlist_id or a playlist instance is required")
 
-        for track in self.check_playlist(playlist=playlist, playlist_id=playlist_id):
+        for track in self.get_tracks(check_for_a_play=True, playlist=playlist, playlist_id=playlist_id):
             if not track.is_a_play:
                 return False
         return True
 
-    def check_playlist(self, *, playlist: Playlist = None, playlist_id: str = None):
-        """Checks every song in a playlist whether it's A-Play
+    def get_tracks(self, check_for_a_play: bool = False, *, playlist: Playlist = None, playlist_id: str = None):
+        """Gets tracks of a playlist and optionally whether it's A-Play
         and adds the result of the check to the song's attribute .is_a_play.
         The playlist instance takes priority over the playlist_id"""
 
@@ -126,14 +126,15 @@ class PlaylistCleaner(Spotify):
                               track_id=track_id,
                               album_id=album_id,
                               artists=artists)
-                is_a_play = (self.is_track_a_play(track))
-                track.is_a_play = is_a_play
+                if check_for_a_play:
+                    is_a_play = (self.is_track_a_play(track))
+                    track.is_a_play = is_a_play
 
                 yield track
 
         else:
             for track in playlist.tracks:
-                track.is_a_play = self.is_track_a_play(track)
+                if check_for_a_play: track.is_a_play = self.is_track_a_play(track)
 
                 yield track
 

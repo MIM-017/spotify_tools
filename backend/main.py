@@ -34,14 +34,16 @@ async def refine_playlist(playlist_id: str):
 @app.get("/retrieve_playlists")
 async def retrieve_playlists(user_id: Annotated[str, Depends(get_user_id)], check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists()),
+    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
 
 @app.get("/retrieve_tracks/{playlist_id}")
 async def retrieve_tracks(playlist_id: str,
-                          user_id: Annotated[str, Depends(get_user_id)]):
+                          user_id: Annotated[str, Depends(get_user_id)],
+                          check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.check_playlist(playlist_id=playlist_id)),
+    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_tracks(playlist_id=playlist_id,
+                                                                                                  check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
 
 @app.get("/authorize_spotify")
