@@ -13,16 +13,25 @@ const check_for_a_play_button_template = document.getElementById("check-for-a-pl
 let check_for_a_play_button = document.getElementById("check-for-a-play-button");
 
 let state = "playlists";
+let controller;
 
-async function* retrievePlaylists(check_for_a_play = false) {
+function cancelOngoingFetch(){
+    if (controller) controller.abort();
+
+    controller = new AbortController();
+    return controller.signal;
+}
+
+async function* retrievePlaylists(check_for_a_play = false, signal) {
     try{
         let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
         let result = await fetch(`${API_ROOT}/retrieve_playlists?${params.toString()}`,
             {"method": "GET",
-            "credentials": "include"}
+            "credentials": "include",
+            "signal": signal}
         );
 
-        if (result.status !== 200) return null;
+        if (result.status !== 200) return;
 
         result = result.body.getReader();
 
@@ -49,20 +58,22 @@ async function* retrievePlaylists(check_for_a_play = false) {
         }
     } 
     catch (error) {
+        if (error.name === "AbortError") return;
+
         console.error("Error fetching playlists:", error);
-        return null;
+        return;
     }
 }
 
-async function* retrieveTracks(playlist_id, check_for_a_play = false) {
+async function* retrieveTracks(playlist_id, check_for_a_play = false, signal) {
     try{
         let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
         let result = await fetch(`${API_ROOT}/retrieve_tracks/${playlist_id}?${params.toString()}`,
             {"method": "GET",
-            "credentials": "include"
-            });
+            "credentials": "include",
+            "signal": signal});
 
-        if (result.status !== 200) return null;
+        if (result.status !== 200) return;
 
         result = result.body.getReader();
 
@@ -89,15 +100,19 @@ async function* retrieveTracks(playlist_id, check_for_a_play = false) {
         }
     }
     catch (error) {
+        if (error.name === "AbortError") return;
+
         console.error("Error fetching tracks:", error);
-        return null;
+        return;
     }
 }
 
 async function renderPlaylists(check_for_a_play = false){
+    let signal = cancelOngoingFetch();
+
     state = "playlists";
 
-    let playlistData = await retrievePlaylists(check_for_a_play);
+    let playlistData = await retrievePlaylists(check_for_a_play, signal);
 
     data_table_header.innerHTML = "";
     data_table_header.appendChild(playlists_table_header_template.cloneNode(true));
@@ -126,9 +141,11 @@ async function renderPlaylists(check_for_a_play = false){
 }
 
 async function renderTracks(playlist_id, check_for_a_play = false){
+    let signal = cancelOngoingFetch();
+
     state = "tracks";
 
-    let playlistTracks = await retrieveTracks(playlist_id, check_for_a_play);
+    let playlistTracks = await retrieveTracks(playlist_id, check_for_a_play, signal);
 
     data_table_header.innerHTML = "";  // Preparing the table for data insertion
     data_table_header.appendChild(playlist_table_header_template.cloneNode(true));
