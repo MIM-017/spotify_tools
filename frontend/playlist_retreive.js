@@ -10,7 +10,9 @@ const container_name = document.getElementById("container-name");
 const return_to_playlists_button_template = document.getElementById("return-to-playlists-button-template").content.cloneNode(true);
 let return_to_playlists_button = null;
 const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
-let check_for_a_play_button = null;
+let check_for_a_play_button = document.getElementById("check-for-a-play-button");
+
+let state = "playlists";
 
 async function* retrievePlaylists(check_for_a_play = false) {
     try{
@@ -93,6 +95,8 @@ async function* retrieveTracks(playlist_id, check_for_a_play = false) {
 }
 
 async function renderPlaylists(check_for_a_play = false){
+    state = "playlists";
+
     let playlistData = await retrievePlaylists(check_for_a_play);
 
     data_table_header.innerHTML = "";
@@ -104,9 +108,8 @@ async function renderPlaylists(check_for_a_play = false){
     if (return_to_playlists_button) return_to_playlists_button.remove();
     container_name.innerText = "Playlists";
 
-    // controls.appendChild(check_for_a_play_button_template.cloneNode(true));
-    // check_for_a_play_button = controls.querySelector("#check_for_a_play");
-    
+    if (check_for_a_play_button) check_for_a_play_button.onclick = () => renderPlaylists(true);
+
     let counter = 1;
     for await (const element of playlistData) {
         let playlist = playlist_template.cloneNode(true);
@@ -123,19 +126,25 @@ async function renderPlaylists(check_for_a_play = false){
 }
 
 async function renderTracks(playlist_id, check_for_a_play = false){
+    state = "tracks";
+
     let playlistTracks = await retrieveTracks(playlist_id, check_for_a_play);
 
-    data_table_header.innerHTML = "";
+    data_table_header.innerHTML = "";  // Preparing the table for data insertion
     data_table_header.appendChild(playlist_table_header_template.cloneNode(true));
     data_table_body.innerHTML = "";
 
-    const track_template = document.getElementById("track-template").content;
+    const track_template = document.getElementById("track-template").content;  // Getting the track template
 
-    controls.appendChild(return_to_playlists_button_template.cloneNode(true));
+    controls.appendChild(return_to_playlists_button_template.cloneNode(true));  // Adding the return to playlists button
     controls.querySelector("#return-to-playlists-button").onclick = async () => {await renderPlaylists()};
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
 
-    // if (check_for_a_play_button) check_for_a_play_button.remove();
+    if (check_for_a_play_button) check_for_a_play_button.onclick = () => {
+        return_to_playlists_button.remove(); // Remove the button to avoid duplicates
+        renderTracks(playlist_id, true);
+    }
+
     let counter = 1;
     for await (const element of playlistTracks) {
         let track = track_template.cloneNode(true);
