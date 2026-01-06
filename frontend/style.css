@@ -79,3 +79,14 @@ button{
     background-color: #282828;
     border-radius: 9999px;
 }
+
+.button-transparent-style {
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+    letter-spacing: -0.01em;
+
+    background-color: transparent;
+    border: #B3B3B3 solid 1px;
+    border-radius: 9999px;
+}
