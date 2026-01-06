@@ -6,9 +6,45 @@
 
 
 body{
+    margin: 0;
+    padding: 0;
     font-family: 'Spotify Mix';
     background-color: #121212;
+
 }
+
+.logo-big {
+    width: 100px;
+    border-radius: 9999px;
+}
+
+/* Login Page */
+
+.center-content{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-container{
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    border: #B3B3B3 solid 1px;
+    border-radius: 20px;
+    padding: 2em;
+}
+
+#title{
+    margin: 0.5em 0 0 0;
+}
+
+/* Dashboard Page */
 
 #container{
     display: flex;
