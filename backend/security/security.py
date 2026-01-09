@@ -1,7 +1,7 @@
 """Security endpoints and helper functions"""
 
 from fastapi.security import APIKeyCookie
-from fastapi import Security, APIRouter, Response, HTTPException, status
+from fastapi import Security, APIRouter, Response, HTTPException, status, Depends
 from starlette.responses import RedirectResponse
 from typing import Annotated
 from .token_manager import TokenManager
@@ -39,7 +39,19 @@ def set_refresh_token_cookie(response: Response, refresh_token: str):
                         max_age=REFRESH_TOKEN_EXPIRE,
                         httponly=True,
                         secure=False,
-                        path="/check_tokens")  # TODO: Change secure to True in production
+                        path="/check_tokens /logout")  # TODO: Change secure to True in production
+
+
+def remove_auth_cookies(response: Response):
+    response.delete_cookie(key="access_token",
+                           secure=False,
+                           httponly=True,
+                           path="/")  # TODO: Change secure to True in production
+
+    response.delete_cookie(key="refresh_token",
+                           secure=False,
+                           httponly=True,
+                           path="/check_tokens /logout")
 
 
 @auth_router.get("/check_tokens")
@@ -85,7 +97,19 @@ async def authorize_user(code: str):
 
     return response  # TODO: Change
 
+
 def get_user_id(access_token: Annotated[str, Security(access_scheme)]):
     if access_token is None:
         raise unauthorized_exception
     return token_manager.get_spotify_user_id(access_token)
+
+
+@auth_router.get("/logout")
+async def logout_user(user_id: Annotated[str, Depends(get_user_id)]):
+    from ..main import playlist_cleaner
+
+    playlist_cleaner.auth_manager.cache_handler.delete_access_tokens(user_id)
+    response = RedirectResponse("http://127.0.0.1:5500")  # TODO: Change to real URL in production
+    remove_auth_cookies(response)
+
+    return response

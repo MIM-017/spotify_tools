@@ -2,6 +2,7 @@ import { API_ROOT } from "./config.js";
 
 const spotifyAuthorizeURL = `${API_ROOT}/authorize_spotify`;
 const tokenCheckURL = `${API_ROOT}/check_tokens`;
+const logoutURL = `${API_ROOT}/logout`;
 
 export async function fetchAccessToken() {
     const result = await fetch(`${API_ROOT}/get_access_token/`,
@@ -22,7 +23,16 @@ async function checkTokens() {
     }
 }
 
+async function logout(){
+    window.location.href = logoutURL;
+}
+
 const loginButton = document.getElementById("loginButton");
 if (loginButton) {
     loginButton.addEventListener("click", async () => await checkTokens());
+}
+
+const logoutButton = document.getElementById("logout-button");
+if (logoutButton) {
+    logoutButton.addEventListener("click", async () => await logout());
 }

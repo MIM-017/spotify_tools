@@ -59,6 +59,10 @@ body{
     align-items: center;
 }
 
+#logout-button{
+    margin-left: auto;
+}
+
 table{
     width: 80%;
     margin: 20px 0px;

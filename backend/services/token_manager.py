@@ -126,4 +126,20 @@ class TokenManager(CacheHandler):
         self.current_user = user_id
         self.save_token_to_cache(token_info)
 
+    def delete_access_tokens(self, user_id):
+        """Deletes the access token of a user"""
+
+        try:
+            with(open(self.cache_path, "r", encoding='utf-8')) as f:
+                current_tokens = json.loads(f.read())
+                del current_tokens[user_id]
+
+            with open(self.cache_path, "w", encoding='utf-8') as f:
+                f.write(json.dumps(current_tokens, cls=self.encoder_cls))
+
+        except OSError:
+            self.logger.warning(f"Couldn't write token to cache at: {self.cache_path}")
+
+        except JSONDecodeError:
+            self.logger.error(f"Couldn't decode JSON from cache at: {self.cache_path}.")
 
