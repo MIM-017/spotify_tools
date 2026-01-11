@@ -23,6 +23,16 @@ async function checkTokens() {
     }
 }
 
+export async function fetchWithAuthCheck(url, params){
+    const result = await fetch(url, params);
+    if (result.status === 401){
+        await checkTokens();
+    }
+    else{
+        return result;
+    }
+}
+
 async function logout(){
     window.location.href = logoutURL;
 }

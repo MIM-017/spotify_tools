@@ -1,4 +1,5 @@
 import { API_ROOT } from './config.js';
+import { fetchWithAuthCheck } from './auth.js';
 
 const data_table_header = document.getElementById("data-table-header");
 const data_table_body = document.getElementById("data-table-body");
@@ -25,7 +26,7 @@ function cancelOngoingFetch(){
 async function* retrievePlaylists(check_for_a_play = false, signal) {
     try{
         let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
-        let result = await fetch(`${API_ROOT}/retrieve_playlists?${params.toString()}`,
+        let result = await fetchWithAuthCheck(`${API_ROOT}/retrieve_playlists?${params.toString()}`,
             {"method": "GET",
             "credentials": "include",
             "signal": signal}
@@ -68,7 +69,7 @@ async function* retrievePlaylists(check_for_a_play = false, signal) {
 async function* retrieveTracks(playlist_id, check_for_a_play = false, signal) {
     try{
         let params = new URLSearchParams({"check_for_a_play": check_for_a_play.toString()});
-        let result = await fetch(`${API_ROOT}/retrieve_tracks/${playlist_id}?${params.toString()}`,
+        let result = await fetchWithAuthCheck(`${API_ROOT}/retrieve_tracks/${playlist_id}?${params.toString()}`,
             {"method": "GET",
             "credentials": "include",
             "signal": signal});
