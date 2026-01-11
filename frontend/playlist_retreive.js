@@ -169,7 +169,7 @@ async function renderTracks(playlist_id, check_for_a_play = false){
         track.querySelector(".track-index").textContent = counter++;
         track.querySelector(".track-name").textContent = element.name;
         track.querySelector(".artist-name").textContent = element.artists.map(artist => artist.name).join(", ");
-        track.querySelector(".album-name").textContent = element.album_name;
+        track.querySelector(".album-name").textContent = element.album.name;
         track.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unchecked" : element.is_a_play;
         data_table_body.appendChild(track);
     };
