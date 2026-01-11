@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-
 class Album(BaseModel):
-    pass
+    name: str
+    id: str | None = None
