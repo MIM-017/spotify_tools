@@ -107,7 +107,7 @@ class PlaylistCleaner(Spotify):
 
         if playlist is None:
             result = self.playlist_items(playlist_id,
-                                         fields="items(track(name, id, album.id, artists.id, artists.name)), next")
+                                         fields="items(track(name, id, album(id, name), artists(id, name))), next")
             # playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
             tracks = result["items"]
@@ -120,11 +120,11 @@ class PlaylistCleaner(Spotify):
             for raw_track in tracks:
                 track_name = raw_track["track"]["name"]
                 track_id = raw_track["track"]["id"]
-                album_id = raw_track["track"]["album"]["id"]
+                album = Album(id=raw_track["track"]["album"]["id"], name=raw_track["track"]["album"]["name"])
                 artists = [Artist(name=i["name"], artist_id=i["id"]) for i in raw_track["track"]["artists"]]
                 track = Track(name=track_name,
                               track_id=track_id,
-                              album_id=album_id,
+                              album=album,
                               artists=artists)
                 if check_for_a_play:
                     is_a_play = (self.is_track_a_play(track))
