@@ -3,3 +3,4 @@ testing.py
 .idea
 tokens/
 gitleaks.exe
+.env
