@@ -4,8 +4,9 @@ from fastapi.security import APIKeyCookie
 from fastapi import Security, APIRouter, Response, HTTPException, status, Depends
 from starlette.responses import RedirectResponse
 from typing import Annotated
+
 from .token_manager import TokenManager
-from .config import *
+from ..config import ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE
 
 access_scheme = APIKeyCookie(name="access_token", auto_error=False)
 refresh_scheme = APIKeyCookie(name="refresh_token", auto_error=False)

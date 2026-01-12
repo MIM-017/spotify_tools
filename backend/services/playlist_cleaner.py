@@ -1,8 +1,10 @@
 import spotipy
 from spotipy import Spotify
+
 from backend.schemas import *
 from backend.services.api_calls import get_song_play_count, get_artist_monthly_listeners
 from backend.services.token_manager import TokenManager
+from ..config import CLIENT_ID, REDIRECT_URI
 
 
 class PlaylistCleaner(Spotify):
@@ -18,8 +20,8 @@ class PlaylistCleaner(Spotify):
         # TODO: change inheritance to storing a spotipy instance
         cache_handler = TokenManager()
 
-        auth = spotipy.SpotifyPKCE(client_id="03775c1ad3054917ae9f05d01caeb9ed",
-                                   redirect_uri="http://127.0.0.1:8000/authorize_user",
+        auth = spotipy.SpotifyPKCE(client_id=CLIENT_ID,
+                                   redirect_uri=REDIRECT_URI,
                                    scope="playlist-read-private,"
                                          "playlist-read-collaborative,"
                                          "playlist-modify-private,"

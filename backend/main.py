@@ -1,15 +1,16 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends
 from fastapi.responses import StreamingResponse
+
 from backend.security import *
 from backend.services.playlist_cleaner import PlaylistCleaner
+from .config import ORIGINS
 
-origins = ["http://127.0.0.1:5500"]
 
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
