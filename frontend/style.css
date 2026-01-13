@@ -63,14 +63,13 @@ body{
     margin-left: auto;
 }
 
+/* Table Styling */
+
 table{
     width: 80%;
     margin: 20px 0px;
-    border-collapse: collapse;
-}
-
-thead{
-    border-bottom: 1px solid #333;
+    border-collapse: separate;
+    border-spacing: 0px;
 }
 
 th{
@@ -78,7 +77,27 @@ th{
     font-weight: 700;
     letter-spacing: -0.02em;
     text-align: left;
+    border-bottom: 1px solid #333;
+    
 }
+
+.table-data-row:hover {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background-color: #222222;
+}
+
+.table-data-row td:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.table-data-row td:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/* Text Styling */
 
 h1, h2, h3, h4, p, td {
     color: white;
