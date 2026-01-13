@@ -106,7 +106,7 @@ h1, h2, h3, h4, p, td {
     color: white;
 }
 
-.artist-name, .is-a-play, .album-name, .playlist-id {
+.artist-name, .is-a-play, .album-name, .playlist-id, .playlist-id-title {
     color: #B3B3B3;
 }
 
