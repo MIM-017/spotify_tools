@@ -3,17 +3,16 @@ import secrets
 import json
 import errno
 from datetime import datetime, timedelta, UTC
-
 from jwt import ExpiredSignatureError, PyJWTError
 
-from .config import *
+from ..config import ACCESS_TOKEN_EXPIRE, SECRET_KEY
 from ..services.logging import *
 
 
 class TokenManager:
     """Token Manager class to manage the tokens issued by the app"""
 
-    SECRET_KEY = "f34cad96ab843ae541fa90f269ecce855a94fa0937f01267b2097a55e5e102a4"
+    SECRET_KEY = SECRET_KEY
     algorithm = "HS256"
 
     def __init__(self, token_file_path: str = None):
