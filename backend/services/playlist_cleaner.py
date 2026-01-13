@@ -77,8 +77,8 @@ class PlaylistCleaner(Spotify):
                   is_a_play=is_a_play)
 
     def is_track_a_play(self, track: Track) -> bool:
-        if track.album_id:
-            play_count = get_song_play_count(track.track_id, album_id=track.album_id)
+        if track.album.id:
+            play_count = get_song_play_count(track.track_id, album_id=track.album.id)
         else:
             play_count = get_song_play_count(track.track_id, spotify_client=self)
 
@@ -149,9 +149,9 @@ class PlaylistCleaner(Spotify):
 
         if playlist_id is None:
             playlist_id = playlist.playlist_id
-            tracks = self.check_playlist(playlist=playlist)
+            tracks = self.get_tracks(playlist=playlist)
         else:
-            tracks = self.check_playlist(playlist_id=playlist_id)
+            tracks = self.get_tracks(playlist_id=playlist_id)
 
         playlist_name = self.playlist(playlist_id, fields="name")["name"]
 
