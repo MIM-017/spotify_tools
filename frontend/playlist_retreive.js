@@ -13,7 +13,6 @@ let return_to_playlists_button = null;
 const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
 let check_for_a_play_button = document.getElementById("check-for-a-play-button");
 
-let state = "playlists";
 let controller;
 
 function cancelOngoingFetch(){
@@ -111,9 +110,7 @@ async function* retrieveTracks(playlist_id, check_for_a_play = false, signal) {
 async function renderPlaylists(check_for_a_play = false){
     let signal = cancelOngoingFetch();
 
-    state = "playlists";
-
-    let playlistData = await retrievePlaylists(check_for_a_play, signal);
+    let playlistData = retrievePlaylists(check_for_a_play, signal);
 
     data_table_header.innerHTML = "";
     data_table_header.appendChild(playlists_table_header_template.cloneNode(true));
@@ -144,9 +141,7 @@ async function renderPlaylists(check_for_a_play = false){
 async function renderTracks(playlist_id, check_for_a_play = false){
     let signal = cancelOngoingFetch();
 
-    state = "tracks";
-
-    let playlistTracks = await retrieveTracks(playlist_id, check_for_a_play, signal);
+    let playlistTracks = retrieveTracks(playlist_id, check_for_a_play, signal);
 
     data_table_header.innerHTML = "";  // Preparing the table for data insertion
     data_table_header.appendChild(playlist_table_header_template.cloneNode(true));
