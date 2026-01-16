@@ -4,6 +4,13 @@
     font-display: swap;
 }
 
+@keyframes button-hover {
+    from{}
+    to{
+        transform: scale(1.1);
+    }
+}
+
 
 body{
     margin: 0;
@@ -120,6 +127,8 @@ button{
     height: 36px;
     margin: 0px 10px;
     padding: 0px 2em;
+
+    transition: transform 150ms;
 }
 
 .button-green-style {
@@ -151,4 +160,8 @@ button{
     background-color: transparent;
     border: #B3B3B3 solid 1px;
     border-radius: 9999px;
+}
+
+.button-black-style:hover, .button-transparent-style:hover, .button-green-style:hover{
+    transform: scale(1.04);
 }
