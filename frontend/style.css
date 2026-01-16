@@ -70,6 +70,12 @@ body{
     margin-left: auto;
 }
 
+#container-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 /* Table Styling */
 
 table{
@@ -129,6 +135,7 @@ button{
     padding: 0px 2em;
 
     transition: transform 150ms;
+    white-space: nowrap;
 }
 
 .button-green-style {
