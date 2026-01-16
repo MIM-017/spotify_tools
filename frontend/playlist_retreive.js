@@ -153,9 +153,8 @@ async function renderTracks(playlist_id, check_for_a_play = false){
     controls.querySelector("#return-to-playlists-button").onclick = async () => {await renderPlaylists()};
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
 
-    if (check_for_a_play_button) check_for_a_play_button.onclick = () => {
-        return_to_playlists_button.remove(); // Remove the button to avoid duplicates
-        renderTracks(playlist_id, true);
+    if (check_for_a_play_button) check_for_a_play_button.onclick = async () => {
+        await addAPlayDataToTracks(playlist_id);
     }
 
     let counter = 1;
@@ -166,9 +165,24 @@ async function renderTracks(playlist_id, check_for_a_play = false){
         track.querySelector(".artist-name").textContent = element.artists.map(artist => artist.name).join(", ");
         track.querySelector(".album-name").textContent = element.album.name;
         track.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unchecked" : element.is_a_play;
+        track.firstElementChild.setAttribute("track_id", element.track_id);  // Adding the track ID to add A_Play information in the future
         data_table_body.appendChild(track);
     };
 };
 
+async function addAPlayDataToTracks(playlist_id){
+    let signal = cancelOngoingFetch();
+
+    let playlistTracks = retrieveTracks(playlist_id, true, signal);
+
+    for (const track_row of data_table_body.querySelectorAll(".table-data-row")){  // Adding the loading animation to A-Play field
+        track_row.querySelector(".is-a-play").textContent = "Loading..."
+    }
+
+    for await (const track of playlistTracks) {
+        const track_id = track.track_id;
+        data_table_body.querySelector(`[track_id="${track_id}"]`).querySelector(".is-a-play").textContent = track.is_a_play;
+    }
+}
 
 await renderPlaylists();
