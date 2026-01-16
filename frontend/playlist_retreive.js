@@ -149,9 +149,9 @@ async function renderTracks(playlist_id, check_for_a_play = false){
 
     const track_template = document.getElementById("track-template").content;  // Getting the track template
 
-    controls.appendChild(return_to_playlists_button_template.cloneNode(true));  // Adding the return to playlists button
-    controls.querySelector("#return-to-playlists-button").onclick = async () => {await renderPlaylists()};
+    controls.insertBefore(return_to_playlists_button_template.cloneNode(true), controls.querySelector("#logout-button"));  // Adding the return to playlists button
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
+    return_to_playlists_button.onclick = async () => {await renderPlaylists()};
 
     if (check_for_a_play_button) check_for_a_play_button.onclick = async () => {
         await addAPlayDataToTracks(playlist_id);
