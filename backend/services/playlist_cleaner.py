@@ -149,9 +149,9 @@ class PlaylistCleaner(Spotify):
 
         if playlist_id is None:
             playlist_id = playlist.playlist_id
-            tracks = self.get_tracks(playlist=playlist)
+            tracks = self.get_tracks(playlist=playlist, check_for_a_play=True)
         else:
-            tracks = self.get_tracks(playlist_id=playlist_id)
+            tracks = self.get_tracks(playlist_id=playlist_id, check_for_a_play=True)
 
         playlist_name = self.playlist(playlist_id, fields="name")["name"]
 

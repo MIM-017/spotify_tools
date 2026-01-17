@@ -74,7 +74,7 @@ class TokenManager(CacheHandler):
 
         except OSError as error:
             if error.errno == errno.ENOENT:
-                self.logger.debug(f"cache does not exist at: {self.cache_path}")
+                self.logger.info(f"Сache does not exist at: {self.cache_path}")
             else:
                 self.logger.warning(f"Couldn't read cache at: {self.cache_path}")
         except json.JSONDecodeError:
