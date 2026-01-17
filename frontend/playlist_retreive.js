@@ -12,6 +12,8 @@ const return_to_playlists_button_template = document.getElementById("return-to-p
 let return_to_playlists_button = null;
 const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
 let check_for_a_play_button = document.getElementById("check-for-a-play-button");
+const refine_playlist_button_template = document.getElementById("refine-playlist-button-template").content.cloneNode(true);
+let refine_playlist_button = null;
 
 let controller;
 
@@ -118,6 +120,8 @@ async function renderPlaylists(check_for_a_play = false){
 
     const playlist_template = document.getElementById("playlist-template").content;
 
+    if (refine_playlist_button) refine_playlist_button.remove();
+
     if (return_to_playlists_button) return_to_playlists_button.remove();
     container_name.innerText = "Playlists";
 
@@ -148,6 +152,10 @@ async function renderTracks(playlist_id, check_for_a_play = false){
     data_table_body.innerHTML = "";
 
     const track_template = document.getElementById("track-template").content;  // Getting the track template
+
+    controls.insertBefore(refine_playlist_button_template.cloneNode(true), controls.querySelector("#logout-button"));
+    refine_playlist_button = controls.querySelector("#refine-playlist-button");
+    refine_playlist_button.onclick = async () => {await refinePlaylist(playlist_id)};
 
     controls.insertBefore(return_to_playlists_button_template.cloneNode(true), controls.querySelector("#logout-button"));  // Adding the return to playlists button
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
@@ -182,6 +190,21 @@ async function addAPlayDataToTracks(playlist_id){
     for await (const track of playlistTracks) {
         const track_id = track.track_id;
         data_table_body.querySelector(`[track_id="${track_id}"]`).querySelector(".is-a-play").textContent = track.is_a_play;
+    }
+}
+
+async function refinePlaylist(playlist_id){
+    let signal = cancelOngoingFetch();
+
+    try{
+        await fetchWithAuthCheck(`${API_ROOT}/refine_playlist/${playlist_id}`,
+            {"method": "GET",
+            "credentials": "include",
+            "signal": signal}
+        )
+    }
+    catch (error) {
+        console.error(error);
     }
 }
 
