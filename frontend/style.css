@@ -76,6 +76,34 @@ body{
     overflow: hidden;
 }
 
+#check-playlists-dialog{
+    width: 30%;
+    min-height: 30%;
+
+    background-color: #121212;
+    
+    border: #B3B3B3 solid 1px;
+    border-radius: 20px;
+    padding: 2em;
+
+}
+
+#check-playlists-dialog h3{
+    text-align: center;
+    color: red;
+}
+
+
+#check-playlists-dialog p{
+    text-align: center;
+}
+
+#check-playlists-dialog-actions {
+    display: flex;
+    justify-content: center;
+}
+
+
 /* Table Styling */
 
 table{

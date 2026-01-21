@@ -8,10 +8,14 @@ const playlist_table_header_template = document.getElementById("playlist-table-h
 
 const controls = document.getElementById("controls");
 const container_name = document.getElementById("container-name");
+const check_playlists_dialog = document.getElementById("check-playlists-dialog");
+
 const return_to_playlists_button_template = document.getElementById("return-to-playlists-button-template").content.cloneNode(true);
 let return_to_playlists_button = null;
+
 const check_for_a_play_button_template = document.getElementById("check-for-a-play-button-template").content.cloneNode(true);
 let check_for_a_play_button = document.getElementById("check-for-a-play-button");
+
 const refine_playlist_button_template = document.getElementById("refine-playlist-button-template").content.cloneNode(true);
 let refine_playlist_button = null;
 
@@ -125,7 +129,7 @@ async function renderPlaylists(check_for_a_play = false){
     if (return_to_playlists_button) return_to_playlists_button.remove();
     container_name.innerText = "Playlists";
 
-    if (check_for_a_play_button) check_for_a_play_button.onclick = async () => {await addAPlayDataToPlaylists()};
+    if (check_for_a_play_button) check_for_a_play_button.onclick = () => {check_playlists_dialog.showModal();};
 
     let counter = 1;
     for await (const element of playlistData) {
@@ -222,5 +226,12 @@ async function refinePlaylist(playlist_id){
         console.error(error);
     }
 }
+
+document.querySelector("#check-playlists-dialog-cancel-button").onclick = () => {check_playlists_dialog.close()}
+document.querySelector("#check-playlists-dialog-confirm-button").onclick = async () => {
+    check_playlists_dialog.close();
+    await addAPlayDataToPlaylists();
+}
+
 
 await renderPlaylists();
