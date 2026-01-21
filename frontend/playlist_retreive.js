@@ -125,7 +125,7 @@ async function renderPlaylists(check_for_a_play = false){
     if (return_to_playlists_button) return_to_playlists_button.remove();
     container_name.innerText = "Playlists";
 
-    if (check_for_a_play_button) check_for_a_play_button.onclick = () => renderPlaylists(true);
+    if (check_for_a_play_button) check_for_a_play_button.onclick = async () => {await addAPlayDataToPlaylists()};
 
     let counter = 1;
     for await (const element of playlistData) {
@@ -138,6 +138,7 @@ async function renderPlaylists(check_for_a_play = false){
             container_name.innerText = `Playlist: ${element.name}`;
             await renderTracks(element.playlist_id); 
         };
+        playlist.firstElementChild.setAttribute("playlist_id", element.playlist_id);
         data_table_body.appendChild(playlist);
     };
 }
@@ -190,6 +191,20 @@ async function addAPlayDataToTracks(playlist_id){
     for await (const track of playlistTracks) {
         const track_id = track.track_id;
         data_table_body.querySelector(`[track_id="${track_id}"]`).querySelector(".is-a-play").textContent = track.is_a_play;
+    }
+}
+
+async function addAPlayDataToPlaylists(){
+    let signal = cancelOngoingFetch();
+
+    let playlists = retrievePlaylists(true, signal);
+
+    for (const is_a_play_field of data_table_body.querySelectorAll(".is-a-play")){
+        is_a_play_field.textContent = "Loading..."
+    }
+
+    for await (const playlist of playlists) {
+        data_table_body.querySelector(`[playlist_id="${playlist.playlist_id}"]`).querySelector(".is-a-play").textContent = playlist.is_a_play;
     }
 }
 
