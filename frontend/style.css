@@ -167,12 +167,12 @@ button{
 }
 
 .button-green-style {
-    color: black;
+    color: #010502;
     font-weight: 700;
     font-size: 0.875rem;
     letter-spacing: -0.01em;
 
-    background-color: #1DB954;
+    background-color: #1ED760;
     border-radius: 9999px;
 }
 
