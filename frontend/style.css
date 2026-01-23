@@ -76,9 +76,10 @@ body{
     overflow: hidden;
 }
 
-#check-playlists-dialog{
+/* Dialog Styling */
+
+dialog{
     width: 30%;
-    min-height: 30%;
 
     background-color: #121212;
     
@@ -88,21 +89,27 @@ body{
 
 }
 
+dialog p{
+    text-align: center;
+}
+
+#check-playlists-dialog-actions, #refine-playlist-dialog-actions{
+    display: flex;
+    justify-content: center;
+}
+
+#check-playlists-dialog{
+    min-height: 30%;
+}
+
 #check-playlists-dialog h3{
     text-align: center;
     color: red;
 }
 
-
-#check-playlists-dialog p{
-    text-align: center;
+#refine-playlist-dialog p{
+    margin-top: 0;
 }
-
-#check-playlists-dialog-actions {
-    display: flex;
-    justify-content: center;
-}
-
 
 /* Table Styling */
 

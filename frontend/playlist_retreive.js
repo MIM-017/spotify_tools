@@ -9,6 +9,7 @@ const playlist_table_header_template = document.getElementById("playlist-table-h
 const controls = document.getElementById("controls");
 const container_name = document.getElementById("container-name");
 const check_playlists_dialog = document.getElementById("check-playlists-dialog");
+const refine_playlist_dialog = document.getElementById("refine-playlist-dialog");
 
 const return_to_playlists_button_template = document.getElementById("return-to-playlists-button-template").content.cloneNode(true);
 let return_to_playlists_button = null;
@@ -160,7 +161,18 @@ async function renderTracks(playlist_id, playlist_name, check_for_a_play = false
 
     controls.insertBefore(refine_playlist_button_template.cloneNode(true), controls.querySelector("#logout-button"));
     refine_playlist_button = controls.querySelector("#refine-playlist-button");
-    refine_playlist_button.onclick = async () => {await refinePlaylist(playlist_id)};
+    refine_playlist_button.onclick = async () => 
+    {
+        refine_playlist_dialog.querySelector("#refined-playlist-name").textContent = playlist_name + " refined by Spotify Tools";
+        refine_playlist_dialog.showModal();
+        refine_playlist_dialog.querySelector("#refine-playlist-dialog-confirm-button")
+        .addEventListener("click", async () => 
+            {
+                refine_playlist_dialog.close();
+                await refinePlaylist(playlist_id);
+            }
+        );
+    };
 
     controls.insertBefore(return_to_playlists_button_template.cloneNode(true), controls.querySelector("#logout-button"));  // Adding the return to playlists button
     return_to_playlists_button = controls.querySelector("#return-to-playlists-button");
@@ -233,5 +245,6 @@ document.querySelector("#check-playlists-dialog-confirm-button").onclick = async
     await addAPlayDataToPlaylists();
 }
 
+document.querySelector("#refine-playlist-dialog-cancel-button").addEventListener("click", () => refine_playlist_dialog.close());
 
 await renderPlaylists();
