@@ -140,14 +140,14 @@ async function renderPlaylists(check_for_a_play = false){
         playlist.querySelector(".is-a-play").textContent = element.is_a_play === null ? "Unchecked" : element.is_a_play;
         playlist.querySelector(".open-playlist-button").onclick = async () => {
             container_name.innerText = `Playlist: ${element.name}`;
-            await renderTracks(element.playlist_id); 
+            await renderTracks(element.playlist_id, element.name); 
         };
         playlist.firstElementChild.setAttribute("playlist_id", element.playlist_id);
         data_table_body.appendChild(playlist);
     };
 }
 
-async function renderTracks(playlist_id, check_for_a_play = false){
+async function renderTracks(playlist_id, playlist_name, check_for_a_play = false){
     let signal = cancelOngoingFetch();
 
     let playlistTracks = retrieveTracks(playlist_id, check_for_a_play, signal);
