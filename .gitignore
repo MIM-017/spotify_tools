@@ -1,6 +1,7 @@
 testing.py
 .cache
-.idea
+.idea/
 tokens/
+.venv/
 gitleaks.exe
 .env
