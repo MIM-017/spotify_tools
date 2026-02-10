@@ -1,5 +1,5 @@
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, APIRouter
 from fastapi.responses import StreamingResponse
 
 from backend.security import *
@@ -16,30 +16,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router)
+router = APIRouter()
 
 playlist_cleaner = PlaylistCleaner()
 
 
-@app.get("/playlist_formatted/{playlist_id}")
+@router.get("/playlist_formatted/{playlist_id}")
 def get_playlist_kuci_formatted(playlist_id: str):
     result = playlist_cleaner.get_playlist_kuci_formatted(playlist_id=playlist_id)
     return list(result)
 
 
-@app.get("/refine_playlist/{playlist_id}")
+@router.get("/refine_playlist/{playlist_id}")
 def refine_playlist(user_id: Annotated[str, Depends(get_user_id)], playlist_id: str):
     playlist_cleaner.set_current_username(user_id)
     playlist_cleaner.refine_playlist(playlist_id=playlist_id)
 
 
-@app.get("/retrieve_playlists")
+@router.get("/retrieve_playlists")
 def retrieve_playlists(user_id: Annotated[str, Depends(get_user_id)], check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
     return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
 
-@app.get("/retrieve_tracks/{playlist_id}")
+@router.get("/retrieve_tracks/{playlist_id}")
 def retrieve_tracks(playlist_id: str,
                           user_id: Annotated[str, Depends(get_user_id)],
                           check_for_a_play: bool | None = False):
@@ -48,6 +48,9 @@ def retrieve_tracks(playlist_id: str,
                                                                                                   check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
 
-@app.get("/authorize_spotify")
+@router.get("/authorize_spotify")
 def authorize_spotify():
     return RedirectResponse(f"{playlist_cleaner.auth_manager.get_authorize_url()}")
+
+router.include_router(auth_router)
+app.include_router(router, prefix="/api")
