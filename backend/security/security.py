@@ -6,7 +6,7 @@ from starlette.responses import RedirectResponse
 from typing import Annotated
 
 from .token_manager import TokenManager
-from ..config import ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE
+from ..config import ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE, WEBSITE_URI, DASHBOARD_URI
 
 access_scheme = APIKeyCookie(name="access_token", auto_error=False)
 refresh_scheme = APIKeyCookie(name="refresh_token", auto_error=False)
@@ -88,7 +88,7 @@ async def authorize_user(code: str):
     user_id = playlist_cleaner.get_spotify_user_user_id(access_token)
     playlist_cleaner.auth_manager.cache_handler.assign_temp_token_to_user(user_id)
 
-    response = RedirectResponse("http://127.0.0.1:5500/dashboard.html")
+    response = RedirectResponse(DASHBOARD_URI)
 
     jwt = token_manager.create_jwt(spotify_user_id=user_id)
     set_access_token_cookie(response, jwt)
@@ -96,7 +96,7 @@ async def authorize_user(code: str):
     refresh_token = token_manager.save_refresh_token(spotify_user_id=user_id)
     set_refresh_token_cookie(response, refresh_token)
 
-    return response  # TODO: Change
+    return response
 
 
 def get_user_id(access_token: Annotated[str, Security(access_scheme)]):
@@ -110,7 +110,7 @@ async def logout_user(user_id: Annotated[str, Depends(get_user_id)]):
     from ..main import playlist_cleaner
 
     playlist_cleaner.auth_manager.cache_handler.delete_access_tokens(user_id)
-    response = RedirectResponse("http://127.0.0.1:5500")  # TODO: Change to real URL in production
+    response = RedirectResponse(WEBSITE_URI)
     remove_auth_cookies(response)
 
     return response
