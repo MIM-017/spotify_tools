@@ -40,7 +40,7 @@ def set_refresh_token_cookie(response: Response, refresh_token: str):
                         max_age=REFRESH_TOKEN_EXPIRE,
                         httponly=True,
                         secure=False,
-                        path="/check_tokens /logout")  # TODO: Change secure to True in production
+                        path="/")  # TODO: Change secure to True in production
 
 
 def remove_auth_cookies(response: Response):
@@ -52,7 +52,7 @@ def remove_auth_cookies(response: Response):
     response.delete_cookie(key="refresh_token",
                            secure=False,
                            httponly=True,
-                           path="/check_tokens /logout")
+                           path="/")
 
 
 @auth_router.get("/check_tokens")
