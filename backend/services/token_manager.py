@@ -142,3 +142,5 @@ class TokenManager(CacheHandler):
         except JSONDecodeError:
             self.logger.error(f"Couldn't decode JSON from cache at: {self.cache_path}.")
 
+        except KeyError:
+            self.logger.info(f"{user_id} tokens have already been deleted.")
