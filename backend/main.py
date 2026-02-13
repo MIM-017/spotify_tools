@@ -20,6 +20,13 @@ router = APIRouter()
 
 playlist_cleaner = PlaylistCleaner()
 
+def clear_username_generator(iterable):
+    """Created a generator that clears a username after the generator has been exhausted"""
+    try:
+        for i in iterable:
+            yield i
+    finally:
+        playlist_cleaner.clear_current_username()
 
 @router.get("/playlist_formatted/{playlist_id}")
 def get_playlist_kuci_formatted(playlist_id: str):
@@ -37,9 +44,10 @@ def refine_playlist(user_id: Annotated[str, Depends(get_user_id)], playlist_id: 
 @router.get("/retrieve_playlists")
 def retrieve_playlists(user_id: Annotated[str, Depends(get_user_id)], check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    result = StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play)),
-                             media_type="application/x-ndjson")
-    playlist_cleaner.clear_current_username()
+    result = StreamingResponse(
+        clear_username_generator(i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(
+            check_for_a_play=check_for_a_play)),
+        media_type="application/x-ndjson")
     return result
 
 
@@ -48,10 +56,11 @@ def retrieve_tracks(playlist_id: str,
                           user_id: Annotated[str, Depends(get_user_id)],
                           check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    result = StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_tracks(playlist_id=playlist_id,
-                                                                                                  check_for_a_play=check_for_a_play)),
-                             media_type="application/x-ndjson")
-    playlist_cleaner.clear_current_username()
+    result = StreamingResponse(
+        clear_username_generator(i.model_dump_json() + "\n" for i in playlist_cleaner.get_tracks(
+            playlist_id=playlist_id,
+            check_for_a_play=check_for_a_play)),
+        media_type="application/x-ndjson")
     return result
 
 @router.get("/authorize_spotify")
