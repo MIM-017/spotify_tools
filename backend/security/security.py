@@ -84,6 +84,7 @@ def check_auth(response: Response, access_token=Security(access_scheme), refresh
 async def authorize_user(code: str):
     from ..main import playlist_cleaner
 
+    playlist_cleaner.set_current_username("temp")
     access_token = playlist_cleaner.auth_manager.get_access_token(code)
     user_id = playlist_cleaner.get_spotify_user_user_id(access_token)
     playlist_cleaner.auth_manager.cache_handler.assign_temp_token_to_user(user_id)

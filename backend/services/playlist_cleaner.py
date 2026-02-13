@@ -34,6 +34,10 @@ class PlaylistCleaner(Spotify):
         """Sets the username of the current user in cache_handler"""
         self.auth_manager.cache_handler.current_user = user
 
+    def clear_current_username(self):
+        """Clears the username of the current user in cache_handler"""
+        self.auth_manager.cache_handler.current_user = None
+
     def get_current_username(self):
         """Returns the username of the current user in cache_handler"""
         return self.auth_manager.cache_handler.current_user

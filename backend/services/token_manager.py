@@ -62,7 +62,6 @@ class TokenManager(CacheHandler):
 
         return inner
 
-
     def get_cached_token(self):
         token_info = None
         if self.current_user is None: return None

@@ -31,22 +31,28 @@ def get_playlist_kuci_formatted(playlist_id: str):
 def refine_playlist(user_id: Annotated[str, Depends(get_user_id)], playlist_id: str):
     playlist_cleaner.set_current_username(user_id)
     playlist_cleaner.refine_playlist(playlist_id=playlist_id)
+    playlist_cleaner.clear_current_username()
 
 
 @router.get("/retrieve_playlists")
 def retrieve_playlists(user_id: Annotated[str, Depends(get_user_id)], check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play)),
+    result = StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_marked_playlists(check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
+    playlist_cleaner.clear_current_username()
+    return result
+
 
 @router.get("/retrieve_tracks/{playlist_id}")
 def retrieve_tracks(playlist_id: str,
                           user_id: Annotated[str, Depends(get_user_id)],
                           check_for_a_play: bool | None = False):
     playlist_cleaner.set_current_username(user_id)
-    return StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_tracks(playlist_id=playlist_id,
+    result = StreamingResponse((i.model_dump_json() + "\n" for i in playlist_cleaner.get_tracks(playlist_id=playlist_id,
                                                                                                   check_for_a_play=check_for_a_play)),
                              media_type="application/x-ndjson")
+    playlist_cleaner.clear_current_username()
+    return result
 
 @router.get("/authorize_spotify")
 def authorize_spotify():
