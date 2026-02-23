@@ -195,7 +195,7 @@ async function renderTracks(playlist_id, playlist_name, check_for_a_play = false
     };
 };
 
-async function addAPlayDataToTracks(playlist_id){
+async function addAPlayDataToTracks(playlist_id){  // TODO: FIX a bug where if playlist tracks are not fetched completely, a-play check call causes a crash
     let signal = cancelOngoingFetch();
 
     let playlistTracks = retrieveTracks(playlist_id, true, signal);
@@ -206,7 +206,7 @@ async function addAPlayDataToTracks(playlist_id){
 
     for await (const track of playlistTracks) {
         const track_id = track.track_id;
-        data_table_body.querySelector(`[track_id="${track_id}"]`).querySelector(".is-a-play").textContent = track.is_a_play;
+        data_table_body.querySelector(`[track_id="${track_id}"]`).querySelector(".is-a-play").textContent = formatAPlayStatus(track.is_a_play);
     }
 }
 
@@ -220,7 +220,7 @@ async function addAPlayDataToPlaylists(){
     }
 
     for await (const playlist of playlists) {
-        data_table_body.querySelector(`[playlist_id="${playlist.playlist_id}"]`).querySelector(".is-a-play").textContent = playlist.is_a_play;
+        data_table_body.querySelector(`[playlist_id="${playlist.playlist_id}"]`).querySelector(".is-a-play").textContent = formatAPlayStatus(playlist.is_a_play);
     }
 }
 
@@ -237,6 +237,13 @@ async function refinePlaylist(playlist_id){
     catch (error) {
         console.error(error);
     }
+}
+
+function formatAPlayStatus(APlayStatus) {
+    if (APlayStatus === null) return "Undetermined";
+    
+    APlayStatus = APlayStatus.toString()
+    return `${APlayStatus.charAt(0).toUpperCase()}${APlayStatus.slice(1)}`;
 }
 
 document.querySelector("#check-playlists-dialog-cancel-button").onclick = () => {check_playlists_dialog.close()}

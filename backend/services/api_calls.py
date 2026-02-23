@@ -27,8 +27,8 @@ def get_artist_monthly_listeners(artist_id: str):
     return response["data"]["monthlyListeners"]
 
 
-def get_song_play_count(song_id: str, *, album_id: str = None, spotify_client: spotipy.Spotify = None):
-    """Provides the number of plays on a song.
+def get_song_play_count(song_id: str, *, album_id: str = None, spotify_client: spotipy.Spotify = None) -> int | None:
+    """Provides the number of plays on a song. Returns None if unable to determine
     Album ID or an instance of Spotipy Client has to be provided.
     Better performance is achieved if album ID is provided."""
 
@@ -43,7 +43,8 @@ def get_song_play_count(song_id: str, *, album_id: str = None, spotify_client: s
         return _get_song_play_count_with_album_id(song_id, album_id)
 
 
-def _get_song_play_count_with_album_id(song_id: str, album_id: str):
+def _get_song_play_count_with_album_id(song_id: str, album_id: str) -> int | None:
+    """Returns song play count or None if undetermined"""
     disks = get_album_info(album_id)["data"]["discs"]
 
     for disk in disks:

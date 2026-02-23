@@ -80,11 +80,14 @@ class PlaylistCleaner(Spotify):
                   public=public,
                   is_a_play=is_a_play)
 
-    def is_track_a_play(self, track: Track) -> bool:
+    def is_track_a_play(self, track: Track) -> bool | None:
+        """Checks if a track is A-Play. If impossible to determine, returns None"""
         if track.album.id:
             play_count = get_song_play_count(track.track_id, album_id=track.album.id)
         else:
             play_count = get_song_play_count(track.track_id, spotify_client=self)
+
+        if play_count is None: return None
 
         return (play_count <= self.A_PLAY_SONG_STREAMS) and self.is_artist_a_play(track.artists[0])
 
