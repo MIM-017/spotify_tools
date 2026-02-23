@@ -5,3 +5,5 @@ tokens/
 .venv/
 gitleaks.exe
 .env
+frontend/config.js
+backend/config.py
