@@ -84,7 +84,7 @@ class TokenManager(CacheHandler):
         return token_info
 
 
-    @clear_username_afterwards
+    # @clear_username_afterwards
     def save_token_to_cache(self, token_info):
         if self.current_user is None:
             self.current_user = "temp"
