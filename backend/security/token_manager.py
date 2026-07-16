@@ -5,7 +5,7 @@ import errno
 from datetime import datetime, timedelta, UTC
 from jwt import ExpiredSignatureError, PyJWTError
 
-from ..config import ACCESS_TOKEN_EXPIRE, SECRET_KEY
+from ..config import REFRESH_TOKEN_EXPIRE, SECRET_KEY, ACCESS_TOKEN_EXPIRE
 from ..services.logging import *
 
 
@@ -34,7 +34,7 @@ class TokenManager:
         if refresh_token is None:
             refresh_token = self.create_refresh_token()
 
-        expiration_date = (datetime.now(UTC) + timedelta(hours=ACCESS_TOKEN_EXPIRE)).isoformat()
+        expiration_date = (datetime.now(UTC) + timedelta(seconds=REFRESH_TOKEN_EXPIRE)).isoformat()
 
         try:
             with open(self.token_file_path, "r") as f:
@@ -98,7 +98,7 @@ class TokenManager:
 
     def create_jwt(self, spotify_user_id: str) -> str:
         """Creates a JWT access token with a spotify user id"""
-        expiration_date = datetime.now(UTC) + timedelta(hours=ACCESS_TOKEN_EXPIRE)
+        expiration_date = datetime.now(UTC) + timedelta(seconds=ACCESS_TOKEN_EXPIRE)
 
         return jwt.encode({"spotify_user_id": spotify_user_id,
                            "exp": expiration_date},
